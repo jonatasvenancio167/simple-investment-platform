@@ -1,20 +1,36 @@
-h1 Usuários
-= link_to "Novo Usuário", new_user_path, class: "btn btn-primary"
+.container.py-5
+  .row.justify-content-center
+    .col-md-10
+      .card.border-0.shadow-sm.rounded-4
+        .card-body.p-4
+          .d-flex.justify-content-between.align-items-center.mb-4
+            h1.fw-semibold.mb-0.text-dark Usuários
+            = link_to "Novo Usuário", new_user_path, class: "btn btn-outline-primary rounded-pill px-4 fw-semibold"
 
-table
-  thead
-    tr
-      th Nome
-      th Email
-      th Ações
-  tbody
-    - @users.each do |user|
-      tr
-        td = user.name
-        td = user.email
-        td
-          = link_to "Mostrar", user
-          | 
-          = link_to "Editar", edit_user_path(user)
-          | 
-          = link_to "Excluir", user, method: :delete, data: { confirm: "Tem certeza?" }
+          .table-responsive
+            table.table.align-middle
+              thead.border-bottom
+                tr.text-muted.text-uppercase.small
+                  th.fw-semibold Nome
+                  th.fw-semibold Email
+                  th.text-center.fw-semibold Ações
+              tbody
+                - if @users.any?
+                  - @users.each do |user|
+                    tr.border-bottom
+                      td.text-dark.fw-medium= user.name
+                      td.text-secondary= user.email
+                      td.text-center
+                        .btn-group
+                          = link_to "Mostrar", user, class: "btn btn-sm btn-outline-secondary rounded-pill px-3 me-1"
+                          = link_to "Editar", edit_user_path(user), class: "btn btn-sm btn-outline-primary rounded-pill px-3 me-1"
+                          = button_to "Excluir", user_path(user),
+                            method: :delete,
+                            form: { data: { turbo_confirm: "Tem certeza que deseja excluir este usuário?" } },
+                            class: "btn btn-sm btn-outline-danger rounded-pill px-3"
+                - else
+                  tr
+                    td.text-center.py-4.text-muted{ colspan: 3 }
+                      em Nenhum usuário cadastrado.
+
+  = render "shared/floating_home_button"

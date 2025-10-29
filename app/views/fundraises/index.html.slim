@@ -1,30 +1,62 @@
-h1 Ofertas
+.container.py-5
+  .row.justify-content-center
+    .col-md-10
+      .card.border-0.shadow-sm.rounded-4
+        .card-body.p-4
+          .d-flex.justify-content-between.align-items-center.mb-4
+            h1.fw-semibold.mb-0.text-dark Ofertas
+            = link_to "Nova Oferta", new_fundraise_path, class: "btn btn-outline-primary rounded-pill px-4 fw-semibold"
 
-= link_to "Nova Oferta", new_fundraise_path, class: "btn btn-primary"
+          .table-responsive
+            table.table.align-middle
+              thead.border-bottom
+                tr.text-muted.text-uppercase.small
+                  th.fw-semibold Título
+                  th.fw-semibold Meta
+                  th.fw-semibold Status
+                  th.fw-semibold Início
+                  th.fw-semibold Término
+                  th.text-center.fw-semibold Ações
+              tbody
+                - if @fundraises.any?
+                  - @fundraises.each do |fundraise|
+                    tr.border-bottom
+                      td
+                        = link_to fundraise.title, fundraise_path(fundraise),
+                          class: "text-decoration-none text-dark fw-semibold"
+                      td.text-success.fw-medium
+                        i.bi.bi-currency-dollar.me-1
+                        = currency_br_cents(fundraise.target_cents || 0)
+                      td
+                        - case fundraise.status
+                        - when "active"
+                          span.badge.bg-success-subtle.text-success.fw-semibold Ativa
+                        - when "pending"
+                          span.badge.bg-warning-subtle.text-warning.fw-semibold Pendente
+                        - when "closed"
+                          span.badge.bg-danger-subtle.text-danger.fw-semibold Encerrada
+                        - else
+                          span.badge.bg-light.text-muted.fw-semibold= fundraise.status
+                      td.text-secondary
+                        = fundraise.starts_at ? l(fundraise.starts_at, format: :short) : "—"
+                      td.text-secondary
+                        = fundraise.ends_at ? l(fundraise.ends_at, format: :short) : "—"
+                      td.text-center
+                        .btn-group
+                          = link_to "Mostrar", fundraise_path(fundraise),
+                            class: "btn btn-sm btn-outline-secondary rounded-pill px-3 me-1",
+                            aria: { label: "Mostrar detalhes da oferta" }
+                          = link_to "Editar", edit_fundraise_path(fundraise),
+                            class: "btn btn-sm btn-outline-primary rounded-pill px-3 me-1",
+                            aria: { label: "Editar oferta" }
+                          = button_to "Excluir", fundraise_path(fundraise),
+                            method: :delete,
+                            form: { data: { turbo_confirm: "Tem certeza que deseja excluir esta oferta?" } },
+                            class: "btn btn-sm btn-outline-danger rounded-pill px-3",
+                            aria: { label: "Excluir oferta" }
+                - else
+                  tr
+                    td.text-center.py-4.text-muted{ colspan: 6 }
+                      em Nenhuma oferta cadastrada.
 
-table.table
-  thead
-    tr
-      th Título da oferta
-      th Meta
-      th Status
-      th Início
-      th Término
-      th Ações
-  tbody
-    - @fundraises.each do |fundraise|
-      tr
-        td = link_to fundraise.title, fundraise_path(fundraise)
-        td = number_to_currency((fundraise.target_cents || 0) / 100.0, unit: "R$ ", separator: ",", delimiter: ".")
-        td = fundraise.status
-        td = fundraise.starts_at ? l(fundraise.starts_at, format: :short) : "-"
-        td = fundraise.ends_at ? l(fundraise.ends_at, format: :short) : "-"
-        td
-          = link_to "Mostrar", fundraise_path(fundraise), class: "btn btn-sm btn-link"
-          = " "
-          = link_to "Editar", edit_fundraise_path(fundraise), class: "btn btn-sm btn-link"
-          = " "
-          = link_to "Excluir", fundraise_path(fundraise),
-            method: :delete,
-            data: { confirm: "Tem certeza que deseja excluir esta oferta?" },
-            class: "btn btn-sm btn-danger"
+  = render "shared/floating_home_button"

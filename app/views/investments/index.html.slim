@@ -1,0 +1,51 @@
+.container.py-5
+  .row.justify-content-center
+    .col-md-10
+      .card.border-0.shadow-sm.rounded-4
+        .card-body.p-4
+          .d-flex.justify-content-between.align-items-center.mb-4
+            h1.fw-semibold.mb-0.text-dark Investimentos
+            = link_to "Novo investimento", new_investment_path, class: "btn btn-outline-primary rounded-pill px-4 fw-semibold"
+
+          .table-responsive
+            table.table.align-middle
+              thead.border-bottom
+                tr.text-muted.text-uppercase.small
+                  th.fw-semibold Usuário
+                  th.fw-semibold Oferta
+                  th.fw-semibold Valor (R$)
+                  th.fw-semibold Criado em
+                  th.text-center.fw-semibold Ações
+              tbody
+                - if @investments.any?
+                  - @investments.each do |investment|
+                    tr.border-bottom
+                      td
+                        = link_to investment.user.name, user_path(investment.user),
+                          class: "text-decoration-none text-dark fw-semibold"
+                      td
+                        = link_to investment.fundraise.title, fundraise_path(investment.fundraise),
+                          class: "text-decoration-none text-dark fw-medium"
+                      td.text-success.fw-medium
+                        i.bi.bi-currency-dollar.me-1
+                        = currency_br(investment.amount)
+                      td.text-secondary= l(investment.created_at, format: :short)
+                      td.text-center
+                        .btn-group
+                          = link_to "Mostrar", investment_path(investment),
+                            class: "btn btn-sm btn-outline-secondary rounded-pill px-3 me-1",
+                            aria: { label: "Mostrar detalhes do investimento" }
+                          = link_to "Editar", edit_investment_path(investment),
+                            class: "btn btn-sm btn-outline-primary rounded-pill px-3 me-1",
+                            aria: { label: "Editar investimento" }
+                          = button_to "Excluir", investment_path(investment),
+                            method: :delete,
+                            form: { data: { turbo_confirm: "Tem certeza que deseja excluir este investimento?" } },
+                            class: "btn btn-sm btn-outline-danger rounded-pill px-3",
+                            aria: { label: "Excluir investimento" }
+                - else
+                  tr
+                    td.text-center.py-4.text-muted{ colspan: 5 }
+                      em Nenhum investimento cadastrado.
+
+  = render "shared/floating_home_button"
