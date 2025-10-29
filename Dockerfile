@@ -42,6 +42,9 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Normalize Windows CRLF line endings for executable scripts
+RUN find /rails/bin -type f -exec sed -i 's/\r$//' {} +
+
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
@@ -67,6 +70,6 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+# Expor porta padrão do Rails e iniciar o servidor diretamente
+EXPOSE 3000
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]

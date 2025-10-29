@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16.10
+    environment:
+      POSTGRES_DB: simple_investment_platform_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/simple_investment_platform_development
+      RAILS_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    entrypoint: ["bash", "-lc", "rm -f /rails/tmp/pids/server.pid ; find /rails/bin -type f -exec sed -i 's/\\r$//' {} + ; bin/rails db:prepare ; exec ./bin/rails server -b 0.0.0.0"]
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/simple_investment_platform_test
+      RAILS_ENV: test
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["bash", "-lc", "find /rails/bin -type f -exec sed -i 's/\\r$//' {} + ; bundle exec rspec"]
+
+volumes:
+  postgres_data:
+  bundle_cache:
