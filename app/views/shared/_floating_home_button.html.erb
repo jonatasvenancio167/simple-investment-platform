@@ -1,0 +1,10 @@
+<%= link_to root_path,
+            class: "floating-home-btn btn btn-light shadow rounded-circle d-flex align-items-center justify-content-center",
+            title: "Voltar",
+            data: { action: "back-to-home" },
+            aria: { label: "Voltar para a página principal" } do %>
+  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span class="visually-hidden">Voltar para a página principal</span>
+<% end %>
