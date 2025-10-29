@@ -19,6 +19,7 @@ class FundraisesController < ApplicationController
     if @fundraise.save
       redirect_to @fundraise, notice: "Oferta criada com sucesso."
     else
+      flash.now[:alert] = @fundraise.errors.full_messages.to_sentence.presence || "Não foi possível criar a oferta. Verifique os campos."
       render :new, status: :unprocessable_entity
     end
   end
@@ -27,6 +28,7 @@ class FundraisesController < ApplicationController
     if @fundraise.update(fundraise_params)
       redirect_to @fundraise, notice: "Oferta atualizada com sucesso."
     else
+      flash.now[:alert] = @fundraise.errors.full_messages.to_sentence.presence || "Não foi possível atualizar a oferta. Verifique os campos."
       render :edit, status: :unprocessable_entity
     end
   end

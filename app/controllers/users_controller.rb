@@ -20,6 +20,7 @@ class UsersController < ApplicationController
     if @user.save
       redirect_to @user, notice: "Usuário criado com sucesso."
     else
+      flash.now[:alert] = @user.errors.full_messages.to_sentence.presence || "Não foi possível criar o usuário. Verifique os campos."
       render :new, status: :unprocessable_entity
     end
   end
@@ -28,6 +29,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       redirect_to @user, notice: "Usuário atualizado com sucesso."
     else
+      flash.now[:alert] = @user.errors.full_messages.to_sentence.presence || "Não foi possível atualizar o usuário. Verifique os campos."
       render :edit, status: :unprocessable_entity
     end
   end
