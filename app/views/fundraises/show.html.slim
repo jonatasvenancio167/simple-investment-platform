@@ -1,25 +1,33 @@
-h1 = @fundraise.title
+.container.py-4
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.fw-semibold.mb-0.text-dark = @fundraise.title
+    = link_to "Editar", edit_fundraise_path(@fundraise), class: "btn btn-outline-primary"
 
-p
-  strong Meta:
-  = number_to_currency((@fundraise.target_cents || 0) / 100.0, unit: "R$ ", separator: ",", delimiter: ".")
+  .card.shadow-sm.border-0.rounded-4.mb-4
+    .card-body
+      .row
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Meta
+          h4.mb-0.text-success.fw-bold
+            i.bi.bi-currency-dollar.me-1
+            = currency_br_cents(@fundraise.target_cents || 0)
 
-p
-  strong Status:
-  = @fundraise.status
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Status
+          span.badge.bg-success.text-uppercase = @fundraise.status
 
-p
-  strong Descrição:
-  = simple_format(@fundraise.description || "—")
+      .row.mt-3
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Início
+          h6.mb-0.text-dark = @fundraise.starts_at ? l(@fundraise.starts_at, format: :long) : "—"
 
-p
-  strong Início:
-  = @fundraise.starts_at ? l(@fundraise.starts_at, format: :long) : "—"
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Término
+          h6.mb-0.text-dark = @fundraise.ends_at ? l(@fundraise.ends_at, format: :long) : "—"
 
-p
-  strong Término:
-  = @fundraise.ends_at ? l(@fundraise.ends_at, format: :long) : "—"
+      hr.my-4
 
-= link_to "Editar", edit_fundraise_path(@fundraise), class: "btn btn-secondary"
-= " "
-= link_to "Voltar", fundraises_path, class: "btn btn-light"
+      p.mb-1.text-muted.small Descrição
+      p.mb-0.text-dark = simple_format(@fundraise.description || "—")
+
+  = link_to "Voltar", fundraises_path, class: "btn btn-outline-secondary"

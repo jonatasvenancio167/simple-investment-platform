@@ -1,0 +1,21 @@
+.container.py-4
+  nav[aria-label="breadcrumb"].mb-3
+    ol.breadcrumb
+      li.breadcrumb-item = link_to "Investimentos", investments_path
+      li.breadcrumb-item.active aria-current="page" Detalhes do investimento
+
+  h1.fw-semibold.mb-4.text-dark Detalhes do investimento
+
+p
+  | Usuário:
+  = link_to @investment.user.name, user_path(@investment.user)
+
+p
+  | Oferta:
+  = link_to @investment.fundraise.title, fundraise_path(@investment.fundraise)
+
+  p
+    | Valor:
+    i.bi.bi-currency-dollar.ms-2.me-1
+    = currency_br(@investment.amount)
+  = link_to "Voltar", investments_path, class: "btn btn-outline-secondary mt-3"

@@ -1,7 +1,37 @@
-h1 = @user.name
-p
-  strong Email:
-  = @user.email
+.container.mt-5
+  .row.justify-content-center
+    .col-md-8
+      .card.shadow-sm
+        .card-body
+          .d-flex.justify-content-between.align-items-center.mb-3
+            h1.mb-0= @user.name
+            = link_to "Editar", edit_user_path(@user), class: "btn btn-sm btn-outline-warning"
 
-= link_to "Editar", edit_user_path(@user), class: "btn btn-secondary"
-= link_to "Voltar", users_path, class: "btn btn-light"
+          p.mb-4
+            strong Email:
+            = @user.email
+
+          hr
+
+          h2.h5.mb-3.text-secondary Investimentos
+
+          - total_cents = @user.investments.sum(:amount_cents)
+          - quantidade = @user.investments.count
+
+          table.table.table-hover.align-middle
+            thead.table-light
+              tr
+                th Métrica
+                th Valor
+            tbody
+              tr
+                td Total investido
+                td
+                  i.bi.bi-currency-dollar.me-1
+                  = currency_br_cents(total_cents)
+              tr
+                td Quantidade
+                td= quantidade
+
+          .mt-4
+            = link_to "Voltar", users_path, class: "btn btn-outline-secondary"
