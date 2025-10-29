@@ -1,19 +1,54 @@
-= simple_form_for(fundraise) do |f|
-  = f.error_notification
+.container.py-5
+  nav.mb-3[aria-label="breadcrumb"]
+    ol.breadcrumb
+      li.breadcrumb-item = link_to "Ofertas", fundraises_path
+      li.breadcrumb-item.active aria-current="page" = fundraise&.persisted? ? "Editar" : "Novo"
+  .d-flex.justify-content-between.align-items-center.mb-4
+    h1.fw-semibold.mb-0 = fundraise.persisted? ? "Editar Oferta" : "Nova Oferta"
+    = link_to "Voltar", fundraises_path, class: "btn btn-outline-dark rounded-pill px-4"
 
-  .form-inputs
-    = f.input :title, required: true, input_html: { maxlength: 255 }
-    = f.input :description, as: :text, input_html: { rows: 5 }
+  .card.shadow.border-0.rounded-4
+    .card-body.p-4
+      = simple_form_for(fundraise, html: { class: "needs-validation" }) do |f|
+        = f.error_notification
 
-    = f.input :target_cents,
-      label: "Meta (R$)",
-      hint: "Informe o valor em centavos. Ex.: R$ 1.000,00 = 100000 centavos"
+        .row.g-4
+          .col-md-6
+            = f.input :title, label: "Título da Oferta", required: true,
+              input_html: { maxlength: 255, class: "form-control form-control-lg" },
+              error: false
 
-    = f.input :status
+          .col-md-6
+            = f.input :status, prompt: "Selecione",
+              input_html: { class: "form-select form-select-lg" },
+              error: false
 
-    = f.input :starts_at, as: :datetime
-    = f.input :ends_at, as: :datetime
+        .mb-4
+          = f.input :description, as: :text, label: "Descrição",
+            input_html: { rows: 4, class: "form-control form-control-lg" },
+            error: false
 
-  .form-actions
-    = f.button :submit, class: "btn btn-primary"
-    = link_to "Voltar", fundraises_path, class: "btn btn-default"
+        .row.g-4
+          .col-md-6
+            = f.input :target_cents,
+              label: "Meta (R$)",
+              hint: "Informe o valor em centavos (ex: R$ 1.000,00 = 100000)",
+              input_html: { class: "form-control form-control-lg", type: "number", min: 0, step: 1 },
+              error: false
+
+          .col-md-3
+            = f.input :starts_at, as: :string,
+              label: "Início",
+              input_html: { type: "datetime-local", class: "form-control form-control-lg" },
+              error: false
+
+          .col-md-3
+            = f.input :ends_at, as: :string,
+              label: "Término",
+              input_html: { type: "datetime-local", class: "form-control form-control-lg" },
+              error: false
+
+        .d-flex.justify-content-end.gap-3.mt-4
+          = link_to "Cancelar", fundraises_path, class: "btn btn-outline-secondary px-4 rounded-pill"
+          = f.button :submit, f.object.persisted? ? "Salvar Alterações" : "Criar Oferta",
+            class: "btn btn-primary px-4 rounded-pill fw-semibold"

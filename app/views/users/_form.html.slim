@@ -1,4 +1,32 @@
-= simple_form_for(user) do |f|
-  = f.input :name
-  = f.input :email
-  = f.button :submit
+.container.py-5
+  nav.mb-3[aria-label="breadcrumb"]
+    ol.breadcrumb
+      li.breadcrumb-item = link_to "Usuários", users_path
+      li.breadcrumb-item.active aria-current="page" = user&.persisted? ? "Editar" : "Novo"
+  .d-flex.justify-content-between.align-items-center.mb-4
+    - title = user&.persisted? ? "Editar Usuário" : "Novo Usuário"
+    h1.fw-semibold.mb-0.text-dark = title
+    = link_to "Voltar", users_path, class: "btn btn-outline-dark rounded-pill px-4"
+
+  .card.shadow.border-0.rounded-4
+    .card-body.p-4
+      = simple_form_for(user, html: { class: "needs-validation" }) do |f|
+        = f.error_notification
+
+        .row.g-4
+          .col-md-6
+            = f.input :name,
+              label: "Nome",
+              input_html: { class: "form-control form-control-lg", placeholder: "Digite seu nome" },
+              error: false
+
+          .col-md-6
+            = f.input :email,
+              label: "Email",
+              input_html: { class: "form-control form-control-lg", placeholder: "Digite seu e-mail" },
+              error: false
+
+        .d-flex.justify-content-end.gap-3.mt-4
+          = link_to "Cancelar", users_path, class: "btn btn-outline-secondary px-4 rounded-pill"
+          = f.button :submit, (user&.persisted? ? "Salvar Alterações" : "Criar Usuário"),
+            class: "btn btn-primary px-4 rounded-pill fw-semibold"

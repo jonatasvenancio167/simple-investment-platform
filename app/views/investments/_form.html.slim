@@ -1,0 +1,45 @@
+.container.py-5
+  nav.mb-3[aria-label="breadcrumb"]
+    ol.breadcrumb
+      li.breadcrumb-item = link_to "Investimentos", investments_path
+      li.breadcrumb-item.active aria-current="page" = @investment&.persisted? ? "Editar" : "Novo"
+  .d-flex.justify-content-between.align-items-center.mb-4
+    - title = @investment&.persisted? ? "Editar Investimento" : "Novo Investimento"
+    h1.fw-semibold.mb-0 = title
+    = link_to "Voltar", investments_path, class: "btn btn-outline-dark rounded-pill px-4"
+
+  .card.shadow.border-0.rounded-4
+    .card-body.p-4
+      = simple_form_for(@investment, html: { class: "needs-validation" }) do |f|
+        = f.error_notification
+
+        .row.g-4
+          .col-md-6
+            = f.input :user_id,
+              collection: User.all,
+              label_method: :name,
+              value_method: :id,
+              include_blank: "Selecione o usuário",
+              input_html: { class: "form-select form-select-lg" },
+              label: "Usuário"
+
+          .col-md-6
+            = f.input :fundraise_id,
+              collection: Fundraise.open,
+              label_method: :title,
+              value_method: :id,
+              include_blank: "Selecione a oferta",
+              input_html: { class: "form-select form-select-lg" },
+              label: "Oferta"
+
+        .mb-4
+          = f.input :amount_cents,
+            label: "Valor (R$)",
+            hint: "Informe o valor em centavos (ex: R$ 100,00 = 10000)",
+            input_html: { class: "form-control form-control-lg", type: "number", min: 1, step: 1 },
+            error: false
+
+        .d-flex.justify-content-end.gap-3.mt-4
+          = link_to "Cancelar", investments_path, class: "btn btn-outline-secondary px-4 rounded-pill"
+          = f.button :submit, (@investment&.persisted? ? "Salvar Alterações" : "Criar Investimento"),
+            class: "btn btn-primary px-4 rounded-pill fw-semibold"
