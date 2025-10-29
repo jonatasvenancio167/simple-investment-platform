@@ -1,12 +1,12 @@
 puts "Criando usuários..."
-User.create!([
+users = User.create!([
   { name: "Alice", email: "alice@example.com" },
   { name: "Bruno", email: "bruno@example.com" },
   { name: "Carla", email: "carla@example.com" }
 ])
 
 puts "Criando ofertas..."
-Fundraise.create!([
+fundraises = Fundraise.create!([
   {
     title: "oferta 1",
     description: "Primeira oferta de teste",
@@ -31,6 +31,16 @@ Fundraise.create!([
     starts_at: 60.days.ago,
     ends_at: 30.days.ago
   }
+])
+
+puts "Criando investimentos..."
+open_offers = Fundraise.where(status: "open")
+Investment.create!([
+  { user: users[0], fundraise: open_offers[0], amount_cents: 10_000 },
+  { user: users[1], fundraise: open_offers[0], amount_cents: 25_000 },
+  { user: users[2], fundraise: open_offers[1], amount_cents: 50_000 },
+  { user: users[0], fundraise: open_offers[1], amount_cents: 5_000 },
+  { user: users[1], fundraise: open_offers[1], amount_cents: 12_500 }
 ])
 
 puts "Seeds criados com sucesso!"
