@@ -8,6 +8,8 @@ class Fundraise < ApplicationRecord
     :closed
   ], predicates: true
 
+  scope :open, -> { where(status: "open") }
+
   validates :title, presence: true, length: { maximum: 255 }
   validates :target_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :ends_after_starts
@@ -16,8 +18,10 @@ class Fundraise < ApplicationRecord
     target_cents.to_d / 100
   end
 
-  def target(amount)
+  def target=(amount)
     self.target_cents = (BigDecimal(amount.to_s) * 100).to_i
+  rescue ArgumentError
+    errors.add(:target, "não é um número válido")
   end
 
   private
