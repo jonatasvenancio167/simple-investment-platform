@@ -3,7 +3,25 @@ class FundraisesController < ApplicationController
   before_action :set_fundraise, only: %i[show edit update destroy]
 
   def index
-    @fundraises = Fundraise.order(created_at: :desc)
+    scope = Fundraise.order(created_at: :desc)
+
+    if params[:title].present?
+      scope = scope.where("LOWER(title) LIKE ?", "%#{params[:title].to_s.downcase}%")
+    end
+
+    if params[:status].present?
+      scope = scope.where(status: params[:status])
+    end
+
+    @per_page = (params[:per_page].presence || 5).to_i.clamp(1, 100)
+    @page = (params[:page].presence || 1).to_i
+    @page = 1 if @page < 1
+
+    @total_count = scope.count
+    @total_pages = [(@total_count.to_f / @per_page).ceil, 1].max
+    @page = [@page, @total_pages].min
+
+    @fundraises = scope.offset((@page - 1) * @per_page).limit(@per_page)
   end
 
   def show; end
