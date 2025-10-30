@@ -36,12 +36,13 @@ RSpec.describe User, type: :model do
     expect(dup.errors[:email]).to be_present
   end
 
-  it "restricts destroy when has investments" do
+  it "destroys user and dependent investments" do
     user = create(:user)
     offer = create(:fundraise, status: "open")
     create(:investment, user: user, fundraise: offer, amount_cents: 10_000)
 
-    expect(user.destroy).to be_falsey
-    expect(user.errors[:base]).to be_present
+    expect {
+      user.destroy
+    }.to change(User, :count).by(-1).and change(Investment, :count).by(-1)
   end
 end
