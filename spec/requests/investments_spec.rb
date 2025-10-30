@@ -14,6 +14,22 @@ RSpec.describe "Investments", type: :request do
       expect(response.body).to include("Editar")
       expect(response.body).to include("Excluir")
     end
+
+    it "filtra por user_id e fundraise_id e pagina resultados" do
+      user1 = create(:user, name: "Ana")
+      user2 = create(:user, name: "Bruno")
+      fr1 = create(:fundraise, title: "Série A", status: "open")
+      fr2 = create(:fundraise, title: "Bridge", status: "open")
+
+      create(:investment, user: user1, fundraise: fr1, amount_cents: 10_000)
+      create(:investment, user: user2, fundraise: fr2, amount_cents: 20_000)
+
+      get investments_path, params: { user_id: user1.id, fundraise_id: fr1.id, per_page: 5, page: 1 }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(user1.name)
+      expect(response.body).to include(fr1.title)
+      expect(response.body).to include("Página 1")
+    end
   end
 
   describe "POST /investments" do
@@ -29,7 +45,7 @@ RSpec.describe "Investments", type: :request do
       expect(response).to redirect_to(investment_path(Investment.last))
       follow_redirect!
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Detalhes do investimento")
+      expect(response.body).to include("Detalhes do Investimento")
     end
 
     it "returns error with invalid data" do

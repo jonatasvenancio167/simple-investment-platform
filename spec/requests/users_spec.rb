@@ -62,15 +62,48 @@ RSpec.describe "Users", type: :request do
       expect(response).to have_http_status(:found)
     end
 
-    it "não remove usuário com investimentos (restrito)" do
+    it "remove usuário com investimentos e destrói investimentos em cascata" do
       user = create(:user)
       offer = create(:fundraise, status: "open")
       create(:investment, user: user, fundraise: offer, amount_cents: 10_000)
 
       expect {
         delete user_path(user)
-      }.not_to change(User, :count)
+      }.to change(User, :count).by(-1).and change(Investment, :count).by(-1)
       expect(response).to have_http_status(:found)
+    end
+  end
+
+  describe "GET /users com filtros e paginação" do
+    it "filtra por nome (case-insensitive)" do
+      ana = create(:user, name: "Ana", email: "ana@example.org")
+      bruno = create(:user, name: "Bruno", email: "bruno@example.org")
+
+      get users_path, params: { name: "an" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(ana.name)
+      expect(response.body).not_to include(bruno.name)
+    end
+
+    it "filtra por email (case-insensitive)" do
+      ana = create(:user, name: "Ana", email: "ana@example.org")
+      bruno = create(:user, name: "Bruno", email: "bruno@example.org")
+
+      get users_path, params: { email: "BRUNO@EXAMPLE" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(bruno.email)
+      expect(response.body).not_to include(ana.email)
+    end
+
+    it "pagina resultados e preserva parâmetros" do
+      names = %w[U1 U2 U3 U4 U5 U6]
+      names.each { |n| create(:user, name: n) }
+
+      get users_path, params: { per_page: 5, page: 2 }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Página 2")
+      expect(response.body).to include("U1")
+      expect(response.body).not_to include("U6")
     end
   end
 end
