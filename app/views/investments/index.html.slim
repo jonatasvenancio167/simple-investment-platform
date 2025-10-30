@@ -1,11 +1,42 @@
 .container.py-5
+  nav.mb-3[aria-label="breadcrumb"]
+    .d-flex.justify-content-between.align-items-center
+      ol.breadcrumb
+        li.breadcrumb-item = link_to "Dashboard", root_path
+        li.breadcrumb-item.active aria-current="page" Investimentos
+      = render "shared/back_to_previous_button", target: root_path
   .row.justify-content-center
     .col-md-10
       .card.border-0.shadow-sm.rounded-4
         .card-body.p-4
-          .d-flex.justify-content-between.align-items-center.mb-4
-            h1.fw-semibold.mb-0.text-dark Investimentos
+          .d-flex.justify-content-end.mb-4
             = link_to "Novo investimento", new_investment_path, class: "btn btn-outline-primary rounded-pill px-4 fw-semibold"
+
+          / Filtros
+          = form_with url: investments_path, method: :get, local: true do |f|
+            .row.g-3.align-items-end.mb-3
+              .col-md-3
+                = label_tag :user_id, "Usuário", class: "form-label"
+                = select_tag :user_id,
+                  options_for_select([["Todos", ""]] + @users.map { |u| [u.name, u.id] }, params[:user_id]),
+                  class: "form-select"
+              .col-md-3
+                = label_tag :fundraise_id, "Oferta", class: "form-label"
+                = select_tag :fundraise_id,
+                  options_for_select([["Todas", ""]] + @fundraises.map { |fr| [fr.title, fr.id] }, params[:fundraise_id]),
+                  class: "form-select"
+              .col-md-2
+                = label_tag :min_amount, "Valor mín (R$)", class: "form-label"
+                = number_field_tag :min_amount, params[:min_amount], step: "0.01", class: "form-control"
+              .col-md-2
+                = label_tag :max_amount, "Valor máx (R$)", class: "form-label"
+                = number_field_tag :max_amount, params[:max_amount], step: "0.01", class: "form-control"
+              .col-md-2
+                = label_tag :per_page, "Por página", class: "form-label"
+                = select_tag :per_page, options_for_select([[5,5],[10,10],[20,20],[50,50],[100,100]], @per_page), class: "form-select"
+            .d-flex.gap-2.mb-3
+              = submit_tag "Filtrar", class: "btn btn-primary rounded-pill px-3"
+              = link_to "Limpar", investments_path, class: "btn btn-outline-secondary rounded-pill px-3"
 
           .table-responsive
             table.table.align-middle
@@ -48,4 +79,34 @@
                     td.text-center.py-4.text-muted{ colspan: 5 }
                       em Nenhum investimento cadastrado.
 
-  = render "shared/floating_home_button"
+          .d-flex.justify-content-between.align-items-center.mt-3
+            .text-muted
+              | Página #{@page} de #{@total_pages} — #{@total_count} registros
+            .btn-group
+              - prev_params = request.query_parameters.merge(page: (@page - 1))
+              - next_params = request.query_parameters.merge(page: (@page + 1))
+              - if @page > 1
+                = link_to "Anterior", investments_path(prev_params), class: "btn btn-outline-secondary"
+              - else
+                a.btn.btn-outline-secondary.disabled aria-disabled="true" href="#" Anterior
+              - if @page < @total_pages
+                = link_to "Próxima", investments_path(next_params), class: "btn btn-outline-secondary"
+              - else
+                a.btn.btn-outline-secondary.disabled aria-disabled="true" href="#" Próxima
+
+          - if @total_pages && @total_pages > 1
+            .d-flex.justify-content-center.align-items-center.mt-2
+              .btn-group
+                - start_page = [@page - 2, 1].max
+                - end_page = [@page + 2, @total_pages].min
+                - if start_page > 1
+                  = link_to "1", investments_path(request.query_parameters.merge(page: 1)), class: "btn btn-outline-secondary"
+                  - if start_page > 2
+                    span.btn.btn-outline-secondary.disabled …
+                - (start_page..end_page).each do |p|
+                  - klass = (p == @page) ? "btn btn-secondary" : "btn btn-outline-secondary"
+                  = link_to p, investments_path(request.query_parameters.merge(page: p)), class: klass
+                - if end_page < @total_pages
+                  - if end_page < (@total_pages - 1)
+                    span.btn.btn-outline-secondary.disabled …
+                  = link_to @total_pages, investments_path(request.query_parameters.merge(page: @total_pages)), class: "btn btn-outline-secondary"
