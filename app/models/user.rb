@@ -1,6 +1,6 @@
 # app/models/user.rb
 class User < ApplicationRecord
-  has_many :investments, dependent: :restrict_with_error
+  has_many :investments, dependent: :destroy
   
   validates :name, presence: true, length: { maximum: 255 }
   validates :email,
