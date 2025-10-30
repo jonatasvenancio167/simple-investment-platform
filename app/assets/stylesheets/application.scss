@@ -19,33 +19,3 @@ body {
   border-color: var(--bs-primary);
   box-shadow: 0 0 0 .2rem rgba(0, 98, 255, .1);
 }
-
-// Botão flutuante para voltar à página principal
-.floating-home-btn {
-  position: fixed;
-  top: calc(24px + env(safe-area-inset-top));
-  left: calc(24px + env(safe-area-inset-left));
-  z-index: 1030; // acima de navbars, abaixo de modais
-  width: 48px;
-  height: 48px;
-  font-size: 1.25rem;
-  padding: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .floating-home-btn {
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .floating-home-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
-  }
-  .floating-home-btn:active {
-    transform: translateY(0);
-  }
-}
-
-.floating-home-btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 .25rem rgba(0, 98, 255, .15), 0 .5rem 1rem rgba(0,0,0,.15);
-}
