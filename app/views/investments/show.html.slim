@@ -1,21 +1,30 @@
 .container.py-4
-  nav[aria-label="breadcrumb"].mb-3
-    ol.breadcrumb
-      li.breadcrumb-item = link_to "Investimentos", investments_path
-      li.breadcrumb-item.active aria-current="page" Detalhes do investimento
+  nav.mb-3[aria-label="breadcrumb"]
+    .d-flex.justify-content-between.align-items-center
+      ol.breadcrumb
+        li.breadcrumb-item = link_to "Dashboard", root_path
+        li.breadcrumb-item = link_to "Investimentos", investments_path
+        li.breadcrumb-item.active aria-current="page" Detalhes do Investimento
+      = render "shared/back_to_previous_button"
 
-  h1.fw-semibold.mb-4.text-dark Detalhes do investimento
+  .card.shadow-sm.border-0.rounded-4.mb-4
+    .card-header.bg-transparent.d-flex.justify-content-end
+      = link_to "Editar", edit_investment_path(@investment), class: "btn btn-outline-primary"
+    .card-body
+      .row
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Usuário
+          h6.mb-0.text-dark = link_to @investment.user.name, user_path(@investment.user)
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Oferta
+          h6.mb-0.text-dark = link_to @investment.fundraise.title, fundraise_path(@investment.fundraise)
 
-p
-  | Usuário:
-  = link_to @investment.user.name, user_path(@investment.user)
-
-p
-  | Oferta:
-  = link_to @investment.fundraise.title, fundraise_path(@investment.fundraise)
-
-  p
-    | Valor:
-    i.bi.bi-currency-dollar.ms-2.me-1
-    = currency_br(@investment.amount)
-  = link_to "Voltar", investments_path, class: "btn btn-outline-secondary mt-3"
+      .row.mt-3
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Valor
+          h4.mb-0.text-success.fw-bold
+            i.bi.bi-currency-dollar.me-1
+            = currency_br(@investment.amount)
+        .col-md-6.mb-3
+          p.mb-1.text-muted.small Criado em
+          h6.mb-0.text-dark = l(@investment.created_at, format: :long)

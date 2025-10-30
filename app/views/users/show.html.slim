@@ -1,11 +1,17 @@
-.container.mt-5
+.container.py-4
+  nav.mb-3[aria-label="breadcrumb"]
+    .d-flex.justify-content-between.align-items-center
+      ol.breadcrumb
+        li.breadcrumb-item = link_to "Dashboard", root_path
+        li.breadcrumb-item = link_to "Usuários", users_path
+        li.breadcrumb-item.active aria-current="page" Detalhes do Usuário
+      = render "shared/back_to_previous_button"
   .row.justify-content-center
     .col-md-8
-      .card.shadow-sm
+      .card.shadow-sm.border-0.rounded-4
+        .card-header.bg-transparent.d-flex.justify-content-end
+          = link_to "Editar", edit_user_path(@user), class: "btn btn-outline-primary"
         .card-body
-          .d-flex.justify-content-between.align-items-center.mb-3
-            h1.mb-0= @user.name
-            = link_to "Editar", edit_user_path(@user), class: "btn btn-sm btn-outline-warning"
 
           p.mb-4
             strong Email:
@@ -32,6 +38,3 @@
               tr
                 td Quantidade
                 td= quantidade
-
-          .mt-4
-            = link_to "Voltar", users_path, class: "btn btn-outline-secondary"

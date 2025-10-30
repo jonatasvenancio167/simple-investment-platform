@@ -1,9 +1,15 @@
 .container.py-4
-  .d-flex.justify-content-between.align-items-center.mb-4
-    h1.fw-semibold.mb-0.text-dark = @fundraise.title
-    = link_to "Editar", edit_fundraise_path(@fundraise), class: "btn btn-outline-primary"
+  nav.mb-3[aria-label="breadcrumb"]
+    .d-flex.justify-content-between.align-items-center
+      ol.breadcrumb
+        li.breadcrumb-item = link_to "Dashboard", root_path
+        li.breadcrumb-item = link_to "Ofertas", fundraises_path
+        li.breadcrumb-item.active aria-current="page" Detalhes da Oferta
+      = render "shared/back_to_previous_button"
 
   .card.shadow-sm.border-0.rounded-4.mb-4
+    .card-header.bg-transparent.d-flex.justify-content-end
+      = link_to "Editar", edit_fundraise_path(@fundraise), class: "btn btn-outline-primary"
     .card-body
       .row
         .col-md-6.mb-3
@@ -14,7 +20,12 @@
 
         .col-md-6.mb-3
           p.mb-1.text-muted.small Status
-          span.badge.bg-success.text-uppercase = @fundraise.status
+          - if @fundraise.status == "open"
+            span.badge.bg-success-subtle.text-success.fw-semibold aberto
+          - elsif @fundraise.status == "closed"
+            span.badge.bg-danger-subtle.text-danger.fw-semibold fechado
+          - else
+            span.badge.bg-light.text-muted.fw-semibold = @fundraise.status
 
       .row.mt-3
         .col-md-6.mb-3
@@ -29,5 +40,3 @@
 
       p.mb-1.text-muted.small Descrição
       p.mb-0.text-dark = simple_format(@fundraise.description || "—")
-
-  = link_to "Voltar", fundraises_path, class: "btn btn-outline-secondary"
