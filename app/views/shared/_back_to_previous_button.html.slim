@@ -1,0 +1,9 @@
+- # locals: target, label
+- - target = local_assigns[:target] || request.referer || root_path
+- - label  = local_assigns[:label]  || "Voltar"
+= link_to target,
+  class: "btn btn-outline-dark rounded-pill px-4 d-inline-flex align-items-center gap-2",
+  aria: { label: "Voltar para a página anterior" },
+  title: "Voltar para a página anterior" do
+  i.bi.bi-arrow-left
+  = label
